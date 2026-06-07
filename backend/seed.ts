@@ -109,84 +109,84 @@ async function main() {
   // ── Customers ──────────────────────────────────────────────────────────────
   const customers = [
     {
-      id: CUST.sophie, name: 'Sophie Müller', phone: '+43 664 101 0001',
+      id: CUST.sophie, name: 'Sophie Müller', phone: '+491632421661',
       email: 'sophie.mueller@email.at', locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'MORNING', preferredAppointmentTypeIds: [TYPE.cleaningC, TYPE.checkupC],
       isActive: true, appointmentCount: 15, lastVisitDate: '2026-03-12',
       createdAt: ts('2023-01-15T08:00:00Z'), updatedAt: ts('2026-03-12T10:30:00Z'),
     },
     {
-      id: CUST.hans, name: 'Hans Bauer', phone: '+43 664 101 0002',
+      id: CUST.hans, name: 'Hans Bauer', phone: '+491632421661',
       email: 'hans.bauer@email.at', locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'AFTERNOON', preferredAppointmentTypeIds: [TYPE.cleaningC],
       isActive: true, appointmentCount: 3, lastVisitDate: '2026-01-20',
       createdAt: ts('2025-01-10T08:00:00Z'), updatedAt: ts('2026-01-20T14:00:00Z'),
     },
     {
-      id: CUST.anna, name: 'Anna Berger', phone: '+43 664 101 0003',
+      id: CUST.anna, name: 'Anna Berger', phone: '+491632421661',
       email: 'anna.berger@email.at', locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'ANY', preferredAppointmentTypeIds: [TYPE.cleaningC],
       isActive: true, appointmentCount: 1,
       createdAt: ts('2026-04-01T08:00:00Z'), updatedAt: ts('2026-04-01T08:00:00Z'),
     },
     {
-      id: CUST.thomas, name: 'Thomas Gruber', phone: '+43 664 101 0004',
+      id: CUST.thomas, name: 'Thomas Gruber', phone: '+491632421661',
       email: 'thomas.gruber@email.at', locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'MORNING', preferredAppointmentTypeIds: [TYPE.cleaningC, TYPE.checkupC, TYPE.xrayC],
       isActive: true, appointmentCount: 7, lastVisitDate: '2026-04-22',
       createdAt: ts('2024-02-01T08:00:00Z'), updatedAt: ts('2026-04-22T09:00:00Z'),
     },
     {
-      id: CUST.maria, name: 'Maria Huber', phone: '+43 664 101 0005',
+      id: CUST.maria, name: 'Maria Huber', phone: '+491632421661',
       email: 'maria.huber@email.at', locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'AFTERNOON', preferredAppointmentTypeIds: [TYPE.whiteningC, TYPE.cleaningC],
       isActive: true, appointmentCount: 12, lastVisitDate: '2026-02-14',
       createdAt: ts('2023-06-01T08:00:00Z'), updatedAt: ts('2026-02-14T14:00:00Z'),
     },
     {
-      id: CUST.klaus, name: 'Klaus Fischer', phone: '+43 664 101 0006',
+      id: CUST.klaus, name: 'Klaus Fischer', phone: '+491632421661',
       email: 'k.fischer@email.at', locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'EVENING', preferredAppointmentTypeIds: [TYPE.cleaningC],
       isActive: true, appointmentCount: 2, lastVisitDate: '2025-09-05',
       createdAt: ts('2025-08-01T08:00:00Z'), updatedAt: ts('2025-09-05T18:00:00Z'),
     },
     {
-      id: CUST.elisabeth, name: 'Elisabeth Wagner', phone: '+43 664 101 0007',
+      id: CUST.elisabeth, name: 'Elisabeth Wagner', phone: '+491632421661',
       email: 'elisabeth.wagner@email.at', locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'MORNING', preferredAppointmentTypeIds: [TYPE.checkupC, TYPE.cleaningC],
       isActive: true, appointmentCount: 9, lastVisitDate: '2026-05-03',
       createdAt: ts('2023-09-01T08:00:00Z'), updatedAt: ts('2026-05-03T09:00:00Z'),
     },
     {
-      id: CUST.michael, name: 'Michael Schwarz', phone: '+43 664 101 0008',
+      id: CUST.michael, name: 'Michael Schwarz', phone: '+491632421661',
       email: 'm.schwarz@email.at', locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'ANY', preferredAppointmentTypeIds: [TYPE.cleaningC],
       isActive: true, appointmentCount: 4, lastVisitDate: '2025-12-10',
       createdAt: ts('2024-10-01T08:00:00Z'), updatedAt: ts('2025-12-10T11:00:00Z'),
     },
     {
-      id: CUST.julia, name: 'Julia Mayr', phone: '+43 664 101 0009',
+      id: CUST.julia, name: 'Julia Mayr', phone: '+491632421661',
       email: 'julia.mayr@email.at', locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
       preferredTimeOfDay: 'MORNING', preferredAppointmentTypeIds: [TYPE.cleaningW],
       isActive: true, appointmentCount: 1,
       createdAt: ts('2026-05-15T08:00:00Z'), updatedAt: ts('2026-05-15T08:00:00Z'),
     },
     {
-      id: CUST.peter, name: 'Peter Zimmermann', phone: '+43 664 101 0010',
+      id: CUST.peter, name: 'Peter Zimmermann', phone: '+491632421661',
       email: 'p.zimmermann@email.at', locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
       preferredTimeOfDay: 'AFTERNOON', preferredAppointmentTypeIds: [TYPE.cleaningW, TYPE.checkupW],
       isActive: true, appointmentCount: 6, lastVisitDate: '2026-01-08',
       createdAt: ts('2024-04-01T08:00:00Z'), updatedAt: ts('2026-01-08T14:00:00Z'),
     },
     {
-      id: CUST.laura, name: 'Laura Schneider', phone: '+43 664 101 0011',
+      id: CUST.laura, name: 'Laura Schneider', phone: '+491632421661',
       email: 'laura.schneider@email.at', locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
       preferredTimeOfDay: 'MORNING', preferredAppointmentTypeIds: [TYPE.whiteningW, TYPE.cleaningW],
       isActive: true, appointmentCount: 10, lastVisitDate: '2026-04-15',
       createdAt: ts('2023-03-01T08:00:00Z'), updatedAt: ts('2026-04-15T10:00:00Z'),
     },
     {
-      id: CUST.franz, name: 'Franz Moser', phone: '+43 664 101 0012',
+      id: CUST.franz, name: 'Franz Moser', phone: '+491632421661',
       email: 'f.moser@email.at', locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
       preferredTimeOfDay: 'MORNING', preferredAppointmentTypeIds: [TYPE.checkupW],
       isActive: true, appointmentCount: 5, lastVisitDate: '2026-02-28',
@@ -244,7 +244,7 @@ async function main() {
 
   // Cancelled slots
   batch2.set(ref('appointments', A.cancelled1), {
-    customerId: CUST.hans, customerName: 'Hans Bauer', customerPhone: '+43 664 101 0002',
+    customerId: CUST.hans, customerName: 'Hans Bauer', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-07-08T10:00:00Z'), endTime: ts('2026-07-08T10:30:00Z'),
@@ -253,7 +253,7 @@ async function main() {
     createdAt: ts('2026-05-20T10:00:00Z'), updatedAt: ts('2026-07-01T08:00:00Z'),
   });
   batch2.set(ref('appointments', A.cancelled2), {
-    customerId: CUST.maria, customerName: 'Maria Huber', customerPhone: '+43 664 101 0005',
+    customerId: CUST.maria, customerName: 'Maria Huber', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.checkupC, appointmentTypeName: 'Comprehensive Checkup',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-07-14T09:00:00Z'), endTime: ts('2026-07-14T09:45:00Z'),
@@ -262,7 +262,7 @@ async function main() {
     createdAt: ts('2026-05-25T09:00:00Z'), updatedAt: ts('2026-07-05T11:00:00Z'),
   });
   batch2.set(ref('appointments', A.cancelled3), {
-    customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+43 664 101 0004',
+    customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-06-20T11:00:00Z'), endTime: ts('2026-06-20T11:30:00Z'),
@@ -271,7 +271,7 @@ async function main() {
     createdAt: ts('2026-04-10T09:00:00Z'), updatedAt: ts('2026-06-15T09:00:00Z'),
   });
   batch2.set(ref('appointments', A.cancelled4), {
-    customerId: CUST.anna, customerName: 'Anna Berger', customerPhone: '+43 664 101 0003',
+    customerId: CUST.anna, customerName: 'Anna Berger', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-07-22T14:00:00Z'), endTime: ts('2026-07-22T14:30:00Z'),
@@ -282,7 +282,7 @@ async function main() {
 
   // Recovered slot (Sophie took Hans's Jul 8 cleaning slot)
   batch2.set(ref('appointments', A.recovered1), {
-    customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+43 664 101 0001',
+    customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-07-08T10:00:00Z'), endTime: ts('2026-07-08T10:30:00Z'),
@@ -293,7 +293,7 @@ async function main() {
 
   // Future BOOKED — candidates for ongoing/future recovery jobs
   batch2.set(ref('appointments', A.sophieBooked), {
-    customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+43 664 101 0001',
+    customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-08-18T09:00:00Z'), endTime: ts('2026-08-18T09:30:00Z'),
@@ -301,7 +301,7 @@ async function main() {
     createdAt: ts('2026-05-01T09:00:00Z'), updatedAt: ts('2026-05-01T09:00:00Z'),
   });
   batch2.set(ref('appointments', A.thomasBooked), {
-    customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+43 664 101 0004',
+    customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.checkupC, appointmentTypeName: 'Comprehensive Checkup',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-08-12T09:00:00Z'), endTime: ts('2026-08-12T09:45:00Z'),
@@ -309,7 +309,7 @@ async function main() {
     createdAt: ts('2026-05-10T09:00:00Z'), updatedAt: ts('2026-05-10T09:00:00Z'),
   });
   batch2.set(ref('appointments', A.mariaBooked), {
-    customerId: CUST.maria, customerName: 'Maria Huber', customerPhone: '+43 664 101 0005',
+    customerId: CUST.maria, customerName: 'Maria Huber', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.checkupC, appointmentTypeName: 'Comprehensive Checkup',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-09-02T14:00:00Z'), endTime: ts('2026-09-02T14:45:00Z'),
@@ -317,7 +317,7 @@ async function main() {
     createdAt: ts('2026-05-20T14:00:00Z'), updatedAt: ts('2026-05-20T14:00:00Z'),
   });
   batch2.set(ref('appointments', A.klausBooked), {
-    customerId: CUST.klaus, customerName: 'Klaus Fischer', customerPhone: '+43 664 101 0006',
+    customerId: CUST.klaus, customerName: 'Klaus Fischer', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-08-05T18:00:00Z'), endTime: ts('2026-08-05T18:30:00Z'),
@@ -325,7 +325,7 @@ async function main() {
     createdAt: ts('2026-06-01T18:00:00Z'), updatedAt: ts('2026-06-01T18:00:00Z'),
   });
   batch2.set(ref('appointments', A.elisabethBooked), {
-    customerId: CUST.elisabeth, customerName: 'Elisabeth Wagner', customerPhone: '+43 664 101 0007',
+    customerId: CUST.elisabeth, customerName: 'Elisabeth Wagner', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.checkupC, appointmentTypeName: 'Comprehensive Checkup',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-08-20T09:00:00Z'), endTime: ts('2026-08-20T09:45:00Z'),
@@ -333,7 +333,7 @@ async function main() {
     createdAt: ts('2026-06-02T09:00:00Z'), updatedAt: ts('2026-06-02T09:00:00Z'),
   });
   batch2.set(ref('appointments', A.michaelBooked), {
-    customerId: CUST.michael, customerName: 'Michael Schwarz', customerPhone: '+43 664 101 0008',
+    customerId: CUST.michael, customerName: 'Michael Schwarz', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-09-10T10:00:00Z'), endTime: ts('2026-09-10T10:30:00Z'),
@@ -341,7 +341,7 @@ async function main() {
     createdAt: ts('2026-06-01T10:00:00Z'), updatedAt: ts('2026-06-01T10:00:00Z'),
   });
   batch2.set(ref('appointments', A.hansBooked), {
-    customerId: CUST.hans, customerName: 'Hans Bauer', customerPhone: '+43 664 101 0002',
+    customerId: CUST.hans, customerName: 'Hans Bauer', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-09-15T14:00:00Z'), endTime: ts('2026-09-15T14:30:00Z'),
@@ -349,7 +349,7 @@ async function main() {
     createdAt: ts('2026-06-05T14:00:00Z'), updatedAt: ts('2026-06-05T14:00:00Z'),
   });
   batch2.set(ref('appointments', A.annaCleaning), {
-    customerId: CUST.anna, customerName: 'Anna Berger', customerPhone: '+43 664 101 0003',
+    customerId: CUST.anna, customerName: 'Anna Berger', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-09-20T10:00:00Z'), endTime: ts('2026-09-20T10:30:00Z'),
@@ -357,7 +357,7 @@ async function main() {
     createdAt: ts('2026-07-06T10:05:00Z'), updatedAt: ts('2026-07-06T10:05:00Z'),
   });
   batch2.set(ref('appointments', A.juliaBooked), {
-    customerId: CUST.julia, customerName: 'Julia Mayr', customerPhone: '+43 664 101 0009',
+    customerId: CUST.julia, customerName: 'Julia Mayr', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningW, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
     startTime: ts('2026-08-25T09:00:00Z'), endTime: ts('2026-08-25T09:30:00Z'),
@@ -365,7 +365,7 @@ async function main() {
     createdAt: ts('2026-05-15T09:00:00Z'), updatedAt: ts('2026-05-15T09:00:00Z'),
   });
   batch2.set(ref('appointments', A.peterBooked), {
-    customerId: CUST.peter, customerName: 'Peter Zimmermann', customerPhone: '+43 664 101 0010',
+    customerId: CUST.peter, customerName: 'Peter Zimmermann', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.checkupW, appointmentTypeName: 'Comprehensive Checkup',
     locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
     startTime: ts('2026-09-05T14:00:00Z'), endTime: ts('2026-09-05T14:45:00Z'),
@@ -373,7 +373,7 @@ async function main() {
     createdAt: ts('2026-05-20T14:00:00Z'), updatedAt: ts('2026-05-20T14:00:00Z'),
   });
   batch2.set(ref('appointments', A.lauraBooked), {
-    customerId: CUST.laura, customerName: 'Laura Schneider', customerPhone: '+43 664 101 0011',
+    customerId: CUST.laura, customerName: 'Laura Schneider', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.whiteningW, appointmentTypeName: 'Teeth Whitening',
     locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
     startTime: ts('2026-08-30T09:00:00Z'), endTime: ts('2026-08-30T10:00:00Z'),
@@ -381,7 +381,7 @@ async function main() {
     createdAt: ts('2026-05-25T09:00:00Z'), updatedAt: ts('2026-05-25T09:00:00Z'),
   });
   batch2.set(ref('appointments', A.franzBooked), {
-    customerId: CUST.franz, customerName: 'Franz Moser', customerPhone: '+43 664 101 0012',
+    customerId: CUST.franz, customerName: 'Franz Moser', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.checkupW, appointmentTypeName: 'Comprehensive Checkup',
     locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
     startTime: ts('2026-09-12T09:00:00Z'), endTime: ts('2026-09-12T09:45:00Z'),
@@ -391,7 +391,7 @@ async function main() {
 
   // Historical COMPLETED appointments (give customers history)
   batch2.set(ref('appointments', A.sophieH1), {
-    customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+43 664 101 0001',
+    customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2025-09-10T09:00:00Z'), endTime: ts('2025-09-10T09:30:00Z'),
@@ -399,7 +399,7 @@ async function main() {
     createdAt: ts('2025-07-01T09:00:00Z'), updatedAt: ts('2025-09-10T09:30:00Z'),
   });
   batch2.set(ref('appointments', A.sophieH2), {
-    customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+43 664 101 0001',
+    customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.checkupC, appointmentTypeName: 'Comprehensive Checkup',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-03-12T09:00:00Z'), endTime: ts('2026-03-12T09:45:00Z'),
@@ -407,7 +407,7 @@ async function main() {
     createdAt: ts('2026-01-10T09:00:00Z'), updatedAt: ts('2026-03-12T09:45:00Z'),
   });
   batch2.set(ref('appointments', A.thomasH1), {
-    customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+43 664 101 0004',
+    customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.checkupC, appointmentTypeName: 'Comprehensive Checkup',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-04-22T09:00:00Z'), endTime: ts('2026-04-22T09:45:00Z'),
@@ -415,7 +415,7 @@ async function main() {
     createdAt: ts('2026-02-01T09:00:00Z'), updatedAt: ts('2026-04-22T09:45:00Z'),
   });
   batch2.set(ref('appointments', A.mariaH1), {
-    customerId: CUST.maria, customerName: 'Maria Huber', customerPhone: '+43 664 101 0005',
+    customerId: CUST.maria, customerName: 'Maria Huber', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.whiteningC, appointmentTypeName: 'Teeth Whitening',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-02-14T14:00:00Z'), endTime: ts('2026-02-14T15:00:00Z'),
@@ -423,7 +423,7 @@ async function main() {
     createdAt: ts('2025-12-01T14:00:00Z'), updatedAt: ts('2026-02-14T15:00:00Z'),
   });
   batch2.set(ref('appointments', A.elisabethH1), {
-    customerId: CUST.elisabeth, customerName: 'Elisabeth Wagner', customerPhone: '+43 664 101 0007',
+    customerId: CUST.elisabeth, customerName: 'Elisabeth Wagner', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.checkupC, appointmentTypeName: 'Comprehensive Checkup',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2025-11-10T09:00:00Z'), endTime: ts('2025-11-10T09:45:00Z'),
@@ -431,7 +431,7 @@ async function main() {
     createdAt: ts('2025-09-01T09:00:00Z'), updatedAt: ts('2025-11-10T09:45:00Z'),
   });
   batch2.set(ref('appointments', A.elisabethH2), {
-    customerId: CUST.elisabeth, customerName: 'Elisabeth Wagner', customerPhone: '+43 664 101 0007',
+    customerId: CUST.elisabeth, customerName: 'Elisabeth Wagner', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
     startTime: ts('2026-05-03T09:00:00Z'), endTime: ts('2026-05-03T09:30:00Z'),
@@ -439,7 +439,7 @@ async function main() {
     createdAt: ts('2026-03-01T09:00:00Z'), updatedAt: ts('2026-05-03T09:30:00Z'),
   });
   batch2.set(ref('appointments', A.peterH1), {
-    customerId: CUST.peter, customerName: 'Peter Zimmermann', customerPhone: '+43 664 101 0010',
+    customerId: CUST.peter, customerName: 'Peter Zimmermann', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.cleaningW, appointmentTypeName: 'Professional Cleaning',
     locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
     startTime: ts('2026-01-08T14:00:00Z'), endTime: ts('2026-01-08T14:30:00Z'),
@@ -447,7 +447,7 @@ async function main() {
     createdAt: ts('2025-11-01T14:00:00Z'), updatedAt: ts('2026-01-08T14:30:00Z'),
   });
   batch2.set(ref('appointments', A.lauraH1), {
-    customerId: CUST.laura, customerName: 'Laura Schneider', customerPhone: '+43 664 101 0011',
+    customerId: CUST.laura, customerName: 'Laura Schneider', customerPhone: '+491632421661',
     appointmentTypeId: TYPE.whiteningW, appointmentTypeName: 'Teeth Whitening',
     locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
     startTime: ts('2026-04-15T09:00:00Z'), endTime: ts('2026-04-15T10:00:00Z'),
@@ -463,14 +463,14 @@ async function main() {
 
   const waitlistEntries = [
     {
-      id: 'wl-sophie', customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+43 664 101 0001',
+      id: 'wl-sophie', customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+491632421661',
       appointmentTypeId: TYPE.cleaningC, appointmentTypeName: 'Professional Cleaning',
       locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'MORNING', manualPriorityBoost: 0, status: 'ACTIVE', consentGiven: true,
       joinedAt: ts('2026-05-01T09:00:00Z'), updatedAt: ts('2026-05-01T09:00:00Z'),
     },
     {
-      id: 'wl-thomas', customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+43 664 101 0004',
+      id: 'wl-thomas', customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+491632421661',
       appointmentTypeId: TYPE.checkupC, appointmentTypeName: 'Comprehensive Checkup',
       locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'MORNING', manualPriorityBoost: 5, status: 'ACTIVE', consentGiven: true,
@@ -478,21 +478,21 @@ async function main() {
       notes: 'Patient mentioned strong preference for early morning slots',
     },
     {
-      id: 'wl-elisabeth', customerId: CUST.elisabeth, customerName: 'Elisabeth Wagner', customerPhone: '+43 664 101 0007',
+      id: 'wl-elisabeth', customerId: CUST.elisabeth, customerName: 'Elisabeth Wagner', customerPhone: '+491632421661',
       appointmentTypeId: TYPE.checkupC, appointmentTypeName: 'Comprehensive Checkup',
       locationId: LOC.central, locationName: 'Jericho Dental — Vienna Central',
       preferredTimeOfDay: 'MORNING', manualPriorityBoost: 0, status: 'ACTIVE', consentGiven: true,
       joinedAt: ts('2026-06-02T09:00:00Z'), updatedAt: ts('2026-06-02T09:00:00Z'),
     },
     {
-      id: 'wl-julia', customerId: CUST.julia, customerName: 'Julia Mayr', customerPhone: '+43 664 101 0009',
+      id: 'wl-julia', customerId: CUST.julia, customerName: 'Julia Mayr', customerPhone: '+491632421661',
       appointmentTypeId: TYPE.cleaningW, appointmentTypeName: 'Professional Cleaning',
       locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
       preferredTimeOfDay: 'MORNING', manualPriorityBoost: 0, status: 'ACTIVE', consentGiven: true,
       joinedAt: ts('2026-05-15T09:00:00Z'), updatedAt: ts('2026-05-15T09:00:00Z'),
     },
     {
-      id: 'wl-laura', customerId: CUST.laura, customerName: 'Laura Schneider', customerPhone: '+43 664 101 0011',
+      id: 'wl-laura', customerId: CUST.laura, customerName: 'Laura Schneider', customerPhone: '+491632421661',
       appointmentTypeId: TYPE.whiteningW, appointmentTypeName: 'Teeth Whitening',
       locationId: LOC.west, locationName: 'Jericho Dental — Vienna West',
       preferredTimeOfDay: 'MORNING', manualPriorityBoost: 0, status: 'ACTIVE', consentGiven: true,
@@ -517,7 +517,7 @@ async function main() {
     currentCandidateIndex: 0,
     candidates: [
       {
-        customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+43 664 101 0001',
+        customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+491632421661',
         score: 100, reachabilityScore: 85,
         aiRankingReason: 'Loyal morning patient with prior acceptance — best fit for this slot.',
         originalAppointmentId: A.sophieBooked,
@@ -525,14 +525,14 @@ async function main() {
         contactedAt: ts('2026-07-01T08:02:00Z'), lastAttemptAt: ts('2026-07-01T08:02:00Z'),
       },
       {
-        customerId: CUST.hans, customerName: 'Hans Bauer', customerPhone: '+43 664 101 0002',
+        customerId: CUST.hans, customerName: 'Hans Bauer', customerPhone: '+491632421661',
         score: 60, reachabilityScore: 72,
         aiRankingReason: 'Afternoon preference does not match this morning slot; previously declined.',
         originalAppointmentId: A.hansBooked,
         status: 'PENDING', retryCount: 0, callAttemptIds: [],
       },
       {
-        customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+43 664 101 0004',
+        customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+491632421661',
         score: 80, reachabilityScore: 78,
         aiRankingReason: 'Morning preference match, loyal patient, but no prior recovery contact.',
         originalAppointmentId: A.thomasBooked,
@@ -555,7 +555,7 @@ async function main() {
     currentCandidateIndex: 1,
     candidates: [
       {
-        customerId: CUST.elisabeth, customerName: 'Elisabeth Wagner', customerPhone: '+43 664 101 0007',
+        customerId: CUST.elisabeth, customerName: 'Elisabeth Wagner', customerPhone: '+491632421661',
         score: 90, reachabilityScore: 80,
         aiRankingReason: 'Top morning patient with prior acceptance history — called first.',
         originalAppointmentId: A.elisabethBooked,
@@ -563,7 +563,7 @@ async function main() {
         lastAttemptAt: ts('2026-07-05T09:45:00Z'),
       },
       {
-        customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+43 664 101 0004',
+        customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+491632421661',
         score: 80, reachabilityScore: 78,
         aiRankingReason: 'Loyal morning patient wanting a checkup — strong second choice.',
         originalAppointmentId: A.thomasBooked,
@@ -571,14 +571,14 @@ async function main() {
         contactedAt: ts('2026-07-07T09:00:00Z'), lastAttemptAt: ts('2026-07-07T09:00:00Z'),
       },
       {
-        customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+43 664 101 0001',
+        customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+491632421661',
         score: 70, reachabilityScore: 85,
         aiRankingReason: 'Prefers cleaning over checkup, but high reachability makes her a solid reserve.',
         originalAppointmentId: A.sophieBooked,
         status: 'PENDING', retryCount: 0, callAttemptIds: [],
       },
       {
-        customerId: CUST.maria, customerName: 'Maria Huber', customerPhone: '+43 664 101 0005',
+        customerId: CUST.maria, customerName: 'Maria Huber', customerPhone: '+491632421661',
         score: 60, reachabilityScore: 65,
         aiRankingReason: 'Afternoon preference conflicts with this morning slot.',
         originalAppointmentId: A.mariaBooked,
@@ -599,7 +599,7 @@ async function main() {
     currentCandidateIndex: 1,
     candidates: [
       {
-        customerId: CUST.klaus, customerName: 'Klaus Fischer', customerPhone: '+43 664 101 0006',
+        customerId: CUST.klaus, customerName: 'Klaus Fischer', customerPhone: '+491632421661',
         score: 50, reachabilityScore: 20,
         aiRankingReason: 'Low reachability due to repeated no-answers — risk of wasted calls.',
         originalAppointmentId: A.klausBooked,
@@ -607,7 +607,7 @@ async function main() {
         lastAttemptAt: ts('2026-06-15T18:30:00Z'),
       },
       {
-        customerId: CUST.michael, customerName: 'Michael Schwarz', customerPhone: '+43 664 101 0008',
+        customerId: CUST.michael, customerName: 'Michael Schwarz', customerPhone: '+491632421661',
         score: 55, reachabilityScore: 55,
         aiRankingReason: 'No strong time preference match but decent reachability score.',
         originalAppointmentId: A.michaelBooked,
@@ -630,7 +630,7 @@ async function main() {
     currentCandidateIndex: 0,
     candidates: [
       {
-        customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+43 664 101 0001',
+        customerId: CUST.sophie, customerName: 'Sophie Müller', customerPhone: '+491632421661',
         score: 100, reachabilityScore: 85,
         aiRankingReason: 'Highest priority — morning patient but asked for callback at 2 PM today.',
         originalAppointmentId: A.sophieBooked,
@@ -638,7 +638,7 @@ async function main() {
         contactedAt: ts('2026-07-06T10:05:00Z'), lastAttemptAt: ts('2026-07-06T10:05:00Z'),
       },
       {
-        customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+43 664 101 0004',
+        customerId: CUST.thomas, customerName: 'Thomas Gruber', customerPhone: '+491632421661',
         score: 80, reachabilityScore: 78,
         aiRankingReason: 'Solid morning candidate on standby if Sophie declines the callback.',
         originalAppointmentId: A.thomasBooked,
@@ -658,7 +658,7 @@ async function main() {
   // job-success: Sophie accepted
   batch5.set(ref('callAttempts', 'ca-success-1'), {
     recoveryJobId: JOB.success, customerId: CUST.sophie,
-    customerName: 'Sophie Müller', customerPhone: '+43 664 101 0001',
+    customerName: 'Sophie Müller', customerPhone: '+491632421661',
     appointmentId: A.cancelled1, fonioCallId: 'fonio-s1',
     status: 'COMPLETED', outcome: 'ACCEPTED', attemptNumber: 1,
     initiatedAt: ts('2026-07-01T08:02:00Z'), completedAt: ts('2026-07-01T08:04:30Z'), duration: 148,
@@ -668,7 +668,7 @@ async function main() {
   // job-active: Elisabeth no-answer x2
   batch5.set(ref('callAttempts', 'ca-active-1'), {
     recoveryJobId: JOB.active, customerId: CUST.elisabeth,
-    customerName: 'Elisabeth Wagner', customerPhone: '+43 664 101 0007',
+    customerName: 'Elisabeth Wagner', customerPhone: '+491632421661',
     appointmentId: A.cancelled2, fonioCallId: 'fonio-a1',
     status: 'COMPLETED', outcome: 'NO_ANSWER', attemptNumber: 1,
     initiatedAt: ts('2026-07-05T11:10:00Z'), completedAt: ts('2026-07-05T11:11:00Z'), duration: 32,
@@ -676,7 +676,7 @@ async function main() {
   });
   batch5.set(ref('callAttempts', 'ca-active-2'), {
     recoveryJobId: JOB.active, customerId: CUST.elisabeth,
-    customerName: 'Elisabeth Wagner', customerPhone: '+43 664 101 0007',
+    customerName: 'Elisabeth Wagner', customerPhone: '+491632421661',
     appointmentId: A.cancelled2, fonioCallId: 'fonio-a2',
     status: 'COMPLETED', outcome: 'NO_ANSWER', attemptNumber: 2,
     initiatedAt: ts('2026-07-05T11:45:00Z'), completedAt: ts('2026-07-05T11:46:00Z'), duration: 28,
@@ -685,7 +685,7 @@ async function main() {
   // job-active: Thomas currently in-progress
   batch5.set(ref('callAttempts', 'ca-active-3'), {
     recoveryJobId: JOB.active, customerId: CUST.thomas,
-    customerName: 'Thomas Gruber', customerPhone: '+43 664 101 0004',
+    customerName: 'Thomas Gruber', customerPhone: '+491632421661',
     appointmentId: A.cancelled2, fonioCallId: 'fonio-a3',
     status: 'IN_PROGRESS', attemptNumber: 3,
     initiatedAt: ts('2026-07-07T09:00:00Z'),
@@ -695,7 +695,7 @@ async function main() {
   // job-failed: Klaus no-answer x2, Michael no-answer + voicemail
   batch5.set(ref('callAttempts', 'ca-failed-1'), {
     recoveryJobId: JOB.failed, customerId: CUST.klaus,
-    customerName: 'Klaus Fischer', customerPhone: '+43 664 101 0006',
+    customerName: 'Klaus Fischer', customerPhone: '+491632421661',
     appointmentId: A.cancelled3, fonioCallId: 'fonio-f1',
     status: 'COMPLETED', outcome: 'NO_ANSWER', attemptNumber: 1,
     initiatedAt: ts('2026-06-15T18:00:00Z'), completedAt: ts('2026-06-15T18:01:00Z'), duration: 30,
@@ -703,7 +703,7 @@ async function main() {
   });
   batch5.set(ref('callAttempts', 'ca-failed-2'), {
     recoveryJobId: JOB.failed, customerId: CUST.klaus,
-    customerName: 'Klaus Fischer', customerPhone: '+43 664 101 0006',
+    customerName: 'Klaus Fischer', customerPhone: '+491632421661',
     appointmentId: A.cancelled3, fonioCallId: 'fonio-f2',
     status: 'COMPLETED', outcome: 'NO_ANSWER', attemptNumber: 2,
     initiatedAt: ts('2026-06-15T18:30:00Z'), completedAt: ts('2026-06-15T18:31:00Z'), duration: 30,
@@ -711,7 +711,7 @@ async function main() {
   });
   batch5.set(ref('callAttempts', 'ca-failed-3'), {
     recoveryJobId: JOB.failed, customerId: CUST.michael,
-    customerName: 'Michael Schwarz', customerPhone: '+43 664 101 0008',
+    customerName: 'Michael Schwarz', customerPhone: '+491632421661',
     appointmentId: A.cancelled3, fonioCallId: 'fonio-f3',
     status: 'COMPLETED', outcome: 'VOICEMAIL', attemptNumber: 3,
     initiatedAt: ts('2026-06-16T10:00:00Z'), completedAt: ts('2026-06-16T10:02:00Z'), duration: 85,
@@ -719,7 +719,7 @@ async function main() {
   });
   batch5.set(ref('callAttempts', 'ca-failed-4'), {
     recoveryJobId: JOB.failed, customerId: CUST.michael,
-    customerName: 'Michael Schwarz', customerPhone: '+43 664 101 0008',
+    customerName: 'Michael Schwarz', customerPhone: '+491632421661',
     appointmentId: A.cancelled3, fonioCallId: 'fonio-f4',
     status: 'COMPLETED', outcome: 'NO_ANSWER', attemptNumber: 4,
     initiatedAt: ts('2026-06-16T11:00:00Z'), completedAt: ts('2026-06-16T11:01:00Z'), duration: 28,
@@ -729,7 +729,7 @@ async function main() {
   // job-callback: Sophie requested callback
   batch5.set(ref('callAttempts', 'ca-callback-1'), {
     recoveryJobId: JOB.callback, customerId: CUST.sophie,
-    customerName: 'Sophie Müller', customerPhone: '+43 664 101 0001',
+    customerName: 'Sophie Müller', customerPhone: '+491632421661',
     appointmentId: A.cancelled4, fonioCallId: 'fonio-c1',
     status: 'COMPLETED', outcome: 'CALLBACK_REQUESTED', attemptNumber: 1,
     initiatedAt: ts('2026-07-06T10:05:00Z'), completedAt: ts('2026-07-06T10:08:00Z'), duration: 112,
