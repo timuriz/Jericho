@@ -42,11 +42,14 @@ export function formatTranscriptFromArray(items: unknown[]): string | null {
 }
 
 export function resolveTranscript(payload: {
-  formattedTranscript?: string | null;
+  formattedTranscript?: unknown;
   transcript?: unknown[] | null;
 }): string | null {
-  if (payload.formattedTranscript?.trim()) {
+  if (typeof payload.formattedTranscript === 'string' && payload.formattedTranscript.trim()) {
     return payload.formattedTranscript.trim();
+  }
+  if (Array.isArray(payload.formattedTranscript) && payload.formattedTranscript.length > 0) {
+    return formatTranscriptFromArray(payload.formattedTranscript);
   }
   if (Array.isArray(payload.transcript) && payload.transcript.length > 0) {
     return formatTranscriptFromArray(payload.transcript);

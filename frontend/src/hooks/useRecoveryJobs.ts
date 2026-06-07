@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { collection, onSnapshot, query, where, orderBy, type QuerySnapshot, type DocumentData } from '@/lib/firebase';
+import { collection, doc, onSnapshot, query, where, orderBy, type QuerySnapshot, type DocumentData } from '@/lib/firebase';
 import { db } from '@/lib/firebase';
+import { normalizeTranscript } from '@/lib/transcript';
 import { recoveryJobsApi } from '@/lib/api';
 import { queryKeys } from '@/lib/queryClient';
 import type { RecoveryJob, CallAttempt } from '@/types';
@@ -49,7 +50,6 @@ export function useRecoveryJobRealtime(jobId: string | undefined) {
 
   useEffect(() => {
     if (!jobId) return;
-    const { doc } = require('@/lib/firebase');
     const jobRef = doc(db, 'recoveryJobs', jobId);
     const unsubscribe = onSnapshot(jobRef, (snapshot: import('firebase/firestore').DocumentSnapshot) => {
       if (snapshot.exists()) {
@@ -98,23 +98,47 @@ export function useCallAttemptsRealtime(jobId: string | undefined) {
 
   useEffect(() => {
     if (!jobId) { setLoading(false); return; }
+
+    let unsubFallback: (() => void) | undefined;
+
+    const applySnap = (snap: QuerySnapshot<DocumentData>) => {
+      const data = snap.docs
+        .map((d) => convertFirestoreCallAttempt(d.id, d.data()))
+        .sort((a, b) => a.initiatedAt.localeCompare(b.initiatedAt));
+      setAttempts(data);
+      setLoading(false);
+    };
+
     const q = query(
       collection(db, 'callAttempts'),
       where('recoveryJobId', '==', jobId),
       orderBy('initiatedAt', 'asc')
     );
+
     const unsub = onSnapshot(
       q,
-      (snap) => {
-        setAttempts(snap.docs.map((d) => convertFirestoreCallAttempt(d.id, d.data())));
-        setLoading(false);
-      },
+      applySnap,
       (err) => {
-        console.error('[Firestore] Error watching callAttempts:', err);
-        setLoading(false);
+        console.warn('[Firestore] callAttempts query failed, retrying without orderBy:', err.message);
+        const fallbackQ = query(
+          collection(db, 'callAttempts'),
+          where('recoveryJobId', '==', jobId)
+        );
+        unsubFallback = onSnapshot(
+          fallbackQ,
+          applySnap,
+          (err2) => {
+            console.error('[Firestore] Error watching callAttempts:', err2);
+            setLoading(false);
+          }
+        );
       }
     );
-    return () => unsub();
+
+    return () => {
+      unsub();
+      unsubFallback?.();
+    };
   }, [jobId]);
 
   return { attempts, loading };
@@ -148,7 +172,7 @@ function convertFirestoreCallAttempt(id: string, raw: Record<string, unknown>): 
     duration: raw.duration as number | undefined,
     callbackScheduledAt: raw.callbackScheduledAt ? convertTimestamp(raw.callbackScheduledAt) : undefined,
     errorMessage: raw.errorMessage as string | undefined,
-    transcript: raw.transcript as string | null | undefined,
+    transcript: normalizeTranscript(raw.transcript),
     declineReason: raw.declineReason as string | null | undefined,
     customerResponse: raw.customerResponse as string | null | undefined,
   };

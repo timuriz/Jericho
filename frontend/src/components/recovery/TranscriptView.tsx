@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { parseTranscript, type TranscriptLine } from '@/lib/transcript';
+import { normalizeTranscript, parseTranscript, type TranscriptLine } from '@/lib/transcript';
 
 function TranscriptBubble({ line }: { line: TranscriptLine }) {
   if (line.speaker === 'agent') {
@@ -15,8 +15,8 @@ function TranscriptBubble({ line }: { line: TranscriptLine }) {
   if (line.speaker === 'customer') {
     return (
       <div className="flex flex-col items-start gap-0.5">
-        <span className="text-[10px] font-medium text-gray-400 pl-1">Customer</span>
-        <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-800 shadow-sm">
+        <span className="text-[10px] font-medium text-muted-foreground pl-1">Customer</span>
+        <div className="max-w-[85%] rounded-2xl rounded-tl-sm border bg-background px-3 py-2 text-xs text-foreground shadow-sm">
           {line.text}
         </div>
       </div>
@@ -30,7 +30,7 @@ function TranscriptBubble({ line }: { line: TranscriptLine }) {
 }
 
 interface Props {
-  transcript?: string | null;
+  transcript?: unknown;
   emptyMessage?: string;
   maxHeight?: string;
   className?: string;
@@ -43,15 +43,16 @@ export function TranscriptView({
   className = '',
 }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const lines = transcript ? parseTranscript(transcript) : [];
+  const normalized = normalizeTranscript(transcript);
+  const lines = normalized ? parseTranscript(normalized) : [];
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [transcript]);
+  }, [normalized]);
 
-  if (!transcript?.trim()) {
+  if (!normalized) {
     return (
       <p className="text-xs text-muted-foreground italic py-2">{emptyMessage}</p>
     );
@@ -60,7 +61,7 @@ export function TranscriptView({
   return (
     <div
       ref={scrollRef}
-      className={`overflow-y-auto rounded-lg border bg-white p-3 space-y-2 ${maxHeight} ${className}`}
+      className={`overflow-y-auto rounded-lg border bg-muted/40 p-3 space-y-2 ${maxHeight} ${className}`}
     >
       {lines.length === 0 ? (
         <p className="text-xs text-muted-foreground italic">No transcript lines found.</p>

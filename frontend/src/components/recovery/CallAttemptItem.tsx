@@ -3,6 +3,7 @@ import { Phone, CheckCircle, XCircle, Clock, VoicemailIcon, PhoneCall, AlertCirc
 import { formatDateTime, formatDuration, formatRelative } from '@/lib/utils';
 import { RecoveryStatusBadge } from './RecoveryStatusBadge';
 import { TranscriptView } from './TranscriptView';
+import { hasTranscriptContent } from '@/lib/transcript';
 import type { CallAttempt } from '@/types';
 
 const OutcomeIcon = ({ outcome }: { outcome: CallAttempt['outcome'] }) => {
@@ -27,10 +28,10 @@ interface Props {
 
 export function CallAttemptItem({
   attempt,
-  defaultTranscriptOpen = attempt.status === 'COMPLETED' && !!attempt.transcript,
+  defaultTranscriptOpen = attempt.status === 'COMPLETED' && hasTranscriptContent(attempt.transcript),
   alwaysShowTranscript = false,
 }: Props) {
-  const hasTranscript = !!attempt.transcript?.trim();
+  const hasTranscript = hasTranscriptContent(attempt.transcript);
   const [transcriptOpen, setTranscriptOpen] = useState(defaultTranscriptOpen || alwaysShowTranscript);
   const showTranscript = hasTranscript && (transcriptOpen || alwaysShowTranscript);
 

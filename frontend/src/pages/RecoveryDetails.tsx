@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
+import { useEffect } from 'react';
 import { ArrowLeft, AlertTriangle, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,7 @@ import { CallAttemptItem } from '@/components/recovery/CallAttemptItem';
 import { RecoveryTimeline } from '@/components/recovery/RecoveryTimeline';
 import { useRecoveryJobRealtime, useCallAttemptsRealtime, useEscalateJob } from '@/hooks/useRecoveryJobs';
 import { formatDateTime, formatRelative, formatCurrency } from '@/lib/utils';
+import { hasTranscriptContent } from '@/lib/transcript';
 import type { RecoveryJobStatus } from '@/types';
 
 const FINISHED_STATUSES: RecoveryJobStatus[] = ['SUCCESS', 'FAILED', 'ESCALATED'];
@@ -20,6 +22,15 @@ export default function RecoveryDetails() {
   const { job, loading } = useRecoveryJobRealtime(id);
   const { attempts: callAttempts } = useCallAttemptsRealtime(id);
   const escalate = useEscalateJob();
+
+  useEffect(() => {
+    if (loading || !job) return;
+    if (window.location.hash !== '#transcripts') return;
+    const timer = window.setTimeout(() => {
+      document.getElementById('transcripts')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+    return () => window.clearTimeout(timer);
+  }, [job?.id, loading, callAttempts.length]);
 
   if (loading) {
     return (
@@ -50,7 +61,7 @@ export default function RecoveryDetails() {
   const isActive = job.status === 'PENDING' || job.status === 'IN_PROGRESS';
   const isFinished = FINISHED_STATUSES.includes(job.status);
   const completedAttempts = callAttempts.filter((a) => a.status === 'COMPLETED');
-  const hasTranscripts = completedAttempts.some((a) => !!a.transcript?.trim());
+  const hasTranscripts = completedAttempts.some((a) => hasTranscriptContent(a.transcript));
 
   return (
     <div className="space-y-6">

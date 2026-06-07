@@ -123,7 +123,8 @@ export function getCandidateStatusLabel(status: CandidateStatus): string {
 
 // ─── Misc ─────────────────────────────────────────────────────────────────────
 
-export function getInitials(name: string): string {
+export function getInitials(name: string | undefined | null): string {
+  if (!name?.trim()) return '?';
   return name
     .split(' ')
     .map((n) => n[0])
@@ -132,6 +133,7 @@ export function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-export function formatPhone(phone: string): string {
+export function formatPhone(phone: string | undefined | null): string {
+  if (!phone) return '—';
   return phone.replace(/(\+\d{1,3})(\d{3})(\d{3,4})(\d{4})/, '$1 $2 $3 $4');
 }
