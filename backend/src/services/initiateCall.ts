@@ -3,12 +3,16 @@ import { fonioClient } from '../lib/fonio';
 import { buildCustomerContext } from './buildCustomerContext';
 import { Appointment } from '../types';
 
+function ts() { return new Date().toISOString().slice(11, 23); }
+function banner(label: string) { console.log(`\n${ts()} ──── ${label} ${'─'.repeat(Math.max(0, 50 - label.length))}`); }
+
 export async function initiateCall(
   jobId: string,
   candidateIndex: number,
   appointment: Appointment
 ): Promise<string> {
-  console.log(`[initiateCall] START — job=${jobId} candidateIndex=${candidateIndex} appointmentId=${appointment.id}`);
+  banner('CALL INITIATING');
+  console.log(`${ts()} [initiateCall] job=${jobId} candidateIndex=${candidateIndex} appointmentId=${appointment.id} type="${appointment.appointmentTypeName}" slot=${toIso(appointment.startTime).slice(0, 16)}`);
 
   const jobDoc = await col.recoveryJobs.doc(jobId).get();
   const job = jobDoc.data();
@@ -16,25 +20,23 @@ export async function initiateCall(
 
   // Guard: don't call if the job already finished (e.g. from a duplicate webhook or race)
   if (job.status !== 'IN_PROGRESS') {
-    console.warn(`[initiateCall] Job ${jobId} has status=${job.status} — skipping call (not IN_PROGRESS)`);
+    console.warn(`${ts()} [initiateCall] SKIPPED — job ${jobId} status=${job.status} (not IN_PROGRESS)`);
     return '';
   }
 
   const candidate = job.candidates[candidateIndex];
   if (!candidate) throw new Error(`[initiateCall] Candidate ${candidateIndex} not found in job ${jobId}`);
 
-  console.log(`[initiateCall] Candidate — name=${candidate.customerName} phone=${candidate.customerPhone} retryCount=${candidate.retryCount ?? 0}`);
+  const retryCount = candidate.retryCount ?? 0;
+  const attemptNumber = retryCount + 1;
+  console.log(`${ts()} [initiateCall] Candidate ${candidateIndex + 1}/${job.candidates.length} — name="${candidate.customerName}" phone=${candidate.customerPhone} attemptNumber=${attemptNumber} (retryCount=${retryCount})`);
 
   // const settingsDoc = await col.settings.doc('default').get();
   // const settings = settingsDoc.data() ?? {};
   // const systemPrompt = settings.aiSystemPrompt || DEFAULT_PROMPT;
 
   const customerCtx = await buildCustomerContext(candidate.customerId);
-  console.log(`[initiateCall] Customer context — lastVisit=${customerCtx.lastVisit} appointmentCount=${customerCtx.appointmentCount}`);
 
-  const appointmentTime = appointment.startTime;
-
-  const attemptNumber = (candidate.retryCount ?? 0) + 1;
   const attemptRef = col.callAttempts.doc();
   const callAttemptId = attemptRef.id;
 
@@ -51,7 +53,7 @@ export async function initiateCall(
     attemptNumber,
     initiatedAt: now(),
   });
-  console.log(`[initiateCall] Attempt doc created — attemptId=${callAttemptId} attemptNumber=${attemptNumber}`);
+  console.log(`${ts()} [initiateCall] Attempt doc created — attemptId=${callAttemptId}`);
 
   const payload = {
     apiKey: process.env.FONIO_API_KEY,
@@ -63,21 +65,22 @@ export async function initiateCall(
       lastVisit: customerCtx.lastVisit,
       preferredTime: customerCtx.preferredTime,
       appointmentType: appointment.appointmentTypeName,
-      appointmentTime,
-      notes: appointment.notes
+      appointmentTime: toIso(appointment.startTime),
+      notes: appointment.notes,
     },
   };
-  console.log(`[initiateCall] Sending to Fonio — toNumber=${payload.toNumber} fromNumber=${payload.fromNumber} agentId=${payload.agentId}`);
+
+  console.log(`${ts()} [initiateCall] Calling Fonio — from=${payload.fromNumber} to=${payload.toNumber} agentId=${payload.agentId}`);
+  console.log(`${ts()} [initiateCall] Context — customerName="${candidate.customerName}" lastVisit=${customerCtx.lastVisit ?? 'none'} preferredTime=${customerCtx.preferredTime} appointmentType="${appointment.appointmentTypeName}"`);
 
   let fonioResponse: unknown;
   try {
     const res = await fonioClient.post('/api/public/v1/outbound_call', payload);
     fonioResponse = res.data;
-    console.log(`[initiateCall] Fonio response — ${JSON.stringify(fonioResponse)}`);
+    console.log(`${ts()} [initiateCall] Fonio accepted — response: ${JSON.stringify(fonioResponse)}`);
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error(`[initiateCall] Fonio API error — ${msg}`);
-    // Mark attempt as failed so it doesn't block webhook matching
+    console.error(`${ts()} [initiateCall] ERROR — Fonio API rejected call: ${msg}`);
     await attemptRef.update({ status: 'FAILED', failureReason: msg });
     throw err;
   }
@@ -98,7 +101,8 @@ export async function initiateCall(
     updatedAt: now(),
   });
 
-  console.log(`[initiateCall] Job updated — totalAttempts=${(job.totalAttempts ?? 0) + 1}`);
-  console.log(`[initiateCall] DONE — job=${jobId} candidate=${candidateIndex} attemptId=${callAttemptId}`);
+  console.log(`${ts()} [initiateCall] Job updated — totalAttempts=${(job.totalAttempts ?? 0) + 1}`);
+  banner('CALL PLACED — AWAITING OUTCOME');
+  console.log(`${ts()} [initiateCall] job=${jobId} candidate="${candidate.customerName}" attemptId=${callAttemptId}\n`);
   return callAttemptId;
 }

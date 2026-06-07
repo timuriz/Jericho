@@ -1,9 +1,11 @@
 import { col, now, toIso } from '../lib/firebase';
 import { initiateCall } from './initiateCall';
-import { createRecoveryJob } from './createRecoveryJob';
 import { createCalcomBooking } from './createCalcomBooking';
 import { cancelCalcomBooking } from './cancelCalcomBooking';
 import { CallOutcome, Appointment } from '../types';
+
+function ts() { return new Date().toISOString().slice(11, 23); }
+function banner(label: string) { console.log(`\n${ts()} ==== ${label} ${'='.repeat(Math.max(0, 50 - label.length))}`); }
 
 export interface FonioWebhookPayload {
   id: string;
@@ -30,21 +32,21 @@ export async function processOutcome(webhook: FonioWebhookPayload): Promise<void
   const { id: fonioCallId, toNumber, endTimestamp, extractionData } = webhook;
   const outcome = extractionData.callOutcome;
 
-  console.log(`[processOutcome] START — fonioCallId=${fonioCallId} outcome=${outcome} toNumber=${toNumber ?? 'null'} duration=${webhook.duration ?? 'unknown'}s`);
-  console.log(`[processOutcome] ExtractionData — ${JSON.stringify(extractionData)}`);
+  banner(`OUTCOME: ${outcome}`);
+  console.log(`${ts()} [processOutcome] fonioCallId=${fonioCallId} toNumber=${toNumber ?? 'null'} duration=${webhook.duration ?? '?'}s disconnectReason=${webhook.disconnectReason ?? 'none'}`);
+  console.log(`${ts()} [processOutcome] extractionData=${JSON.stringify(extractionData)}`);
 
   // ── Match the call attempt ──────────────────────────────────────────────────
-  // Fonio does not echo back our context, so we match by toNumber → customerPhone.
   let attemptDoc: FirebaseFirestore.DocumentSnapshot | null = null;
 
   if (toNumber) {
-    console.log(`[processOutcome] Matching by toNumber=${toNumber}`);
+    console.log(`${ts()} [processOutcome] Matching call attempt by toNumber=${toNumber} status=INITIATED`);
     const snap = await col.callAttempts
       .where('customerPhone', '==', toNumber)
       .where('status', '==', 'INITIATED')
       .get();
 
-    console.log(`[processOutcome] Phone match query returned ${snap.size} docs`);
+    console.log(`${ts()} [processOutcome] Phone match query — ${snap.size} result(s)`);
 
     if (!snap.empty) {
       const sorted = snap.docs.sort((a, b) => {
@@ -53,16 +55,16 @@ export async function processOutcome(webhook: FonioWebhookPayload): Promise<void
         return bMs - aMs;
       });
       attemptDoc = sorted[0];
-      console.log(`[processOutcome] Matched attempt by phone — attemptId=${attemptDoc.id}`);
+      console.log(`${ts()} [processOutcome] Matched attempt — attemptId=${attemptDoc.id}`);
     }
   } else {
-    console.warn(`[processOutcome] toNumber is null — falling back to most recent INITIATED attempt`);
+    console.warn(`${ts()} [processOutcome] toNumber is null — falling back to most recent INITIATED attempt`);
   }
 
   if (!attemptDoc) {
-    console.log(`[processOutcome] Fallback: querying all INITIATED attempts`);
+    console.log(`${ts()} [processOutcome] No phone match — querying all INITIATED attempts as fallback`);
     const snap = await col.callAttempts.where('status', '==', 'INITIATED').get();
-    console.log(`[processOutcome] Fallback query returned ${snap.size} INITIATED attempts`);
+    console.log(`${ts()} [processOutcome] Fallback query — ${snap.size} INITIATED attempt(s)`);
 
     if (!snap.empty) {
       const sorted = snap.docs.sort((a, b) => {
@@ -72,17 +74,17 @@ export async function processOutcome(webhook: FonioWebhookPayload): Promise<void
       });
       attemptDoc = sorted[0];
       const d = attemptDoc.data()!;
-      console.log(`[processOutcome] Fallback matched — attemptId=${attemptDoc.id} customerName=${d.customerName} phone=${d.customerPhone}`);
+      console.log(`${ts()} [processOutcome] Fallback matched — attemptId=${attemptDoc.id} customer="${d.customerName}" phone=${d.customerPhone}`);
     }
   }
 
   if (!attemptDoc) {
-    console.error(`[processOutcome] FAILED TO MATCH — no INITIATED callAttempt found for fonioCallId=${fonioCallId}. Webhook dropped.`);
+    console.error(`${ts()} [processOutcome] NO MATCH — no INITIATED callAttempt found for fonioCallId=${fonioCallId}. Webhook dropped.`);
     return;
   }
 
   const attempt = attemptDoc.data()!;
-  console.log(`[processOutcome] Attempt matched — attemptId=${attemptDoc.id} recoveryJobId=${attempt.recoveryJobId} appointmentId=${attempt.appointmentId}`);
+  console.log(`${ts()} [processOutcome] Attempt matched — attemptId=${attemptDoc.id} recoveryJobId=${attempt.recoveryJobId} customer="${attempt.customerName}" appointmentId=${attempt.appointmentId}`);
 
   // ── Update call attempt ─────────────────────────────────────────────────────
   await attemptDoc.ref.update({
@@ -96,12 +98,12 @@ export async function processOutcome(webhook: FonioWebhookPayload): Promise<void
     transcript: webhook.formattedTranscript ?? null,
     duration: webhook.duration ?? null,
   });
-  console.log(`[processOutcome] Attempt doc updated to COMPLETED`);
+  console.log(`${ts()} [processOutcome] Attempt doc marked COMPLETED (duration=${webhook.duration ?? '?'}s transcript=${webhook.formattedTranscript ? 'yes' : 'none'})`);
 
   // ── Load recovery job ───────────────────────────────────────────────────────
   const jobDoc = await col.recoveryJobs.doc(attempt.recoveryJobId).get();
   if (!jobDoc.exists) {
-    console.error(`[processOutcome] Recovery job ${attempt.recoveryJobId} not found — cannot advance`);
+    console.error(`${ts()} [processOutcome] Recovery job ${attempt.recoveryJobId} not found — cannot advance`);
     return;
   }
 
@@ -110,13 +112,12 @@ export async function processOutcome(webhook: FonioWebhookPayload): Promise<void
   const candidates = [...(job.candidates as Record<string, unknown>[])];
   const candidate = candidates[idx];
 
-  console.log(`[processOutcome] Job=${attempt.recoveryJobId} status=${job.status} currentCandidateIndex=${idx} totalCandidates=${candidates.length}`);
-  console.log(`[processOutcome] Current candidate — name=${candidate.customerName} retryCount=${candidate.retryCount ?? 0}`);
+  console.log(`${ts()} [processOutcome] Job=${attempt.recoveryJobId} status=${job.status} candidate ${idx + 1}/${candidates.length} — name="${candidate.customerName}" retryCount=${candidate.retryCount ?? 0}`);
 
   // ── Settings ────────────────────────────────────────────────────────────────
   const settingsDoc = await col.settings.doc('default').get();
   const maxRetries: number = (settingsDoc.data()?.maxRetries as number) ?? 2;
-  console.log(`[processOutcome] maxRetries=${maxRetries}`);
+  console.log(`${ts()} [processOutcome] maxRetries=${maxRetries}`);
 
   // ── Contact history ─────────────────────────────────────────────────────────
   await col.contactHistory.add({
@@ -128,19 +129,21 @@ export async function processOutcome(webhook: FonioWebhookPayload): Promise<void
     customerResponse: extractionData.customerResponse ?? null,
     createdAt: now(),
   });
-  console.log(`[processOutcome] Contact history entry written`);
+  console.log(`${ts()} [processOutcome] Contact history written — customerId=${candidate.customerId} outcome=${outcome}`);
 
   // ── Load appointment ────────────────────────────────────────────────────────
   const apptDoc = await col.appointments.doc(attempt.appointmentId).get();
   const appt = { id: apptDoc.id, ...apptDoc.data() } as Appointment;
-  console.log(`[processOutcome] Appointment loaded — id=${appt.id} type=${appt.appointmentTypeName}`);
+  console.log(`${ts()} [processOutcome] Appointment — id=${appt.id} type="${appt.appointmentTypeName}" slot=${toIso(appt.startTime).slice(0, 16)}`);
 
   // ── Route by outcome ────────────────────────────────────────────────────────
-  console.log(`[processOutcome] Routing outcome=${outcome}`);
-
   switch (outcome) {
+
     case 'ACCEPTED': {
-      console.log(`[processOutcome] ACCEPTED — marking job SUCCESS, recovering appointment`);
+      banner('JOB SUCCESS — SLOT RECOVERED');
+      console.log(`${ts()} [processOutcome] Winner: "${candidate.customerName}" (${candidate.customerPhone})`);
+      console.log(`${ts()} [processOutcome] Slot: ${appt.appointmentTypeName} @ ${toIso(appt.startTime).slice(0, 16)}`);
+
       candidates[idx] = { ...candidate, status: 'ACCEPTED' };
       await jobDoc.ref.update({
         candidates,
@@ -158,53 +161,53 @@ export async function processOutcome(webhook: FonioWebhookPayload): Promise<void
         customerPhone: candidate.customerPhone,
         updatedAt: now(),
       });
-      // Create a Cal.com booking for the winner at the recovered (earlier) slot.
-      // Awaited so calcomBookingUid is stored before Cal.com fires BOOKING_CREATED —
-      // without this the webhook handler sees no existing appointment and creates a
-      // duplicate BOOKED entry that triggers a spurious recovery cascade.
+      console.log(`${ts()} [processOutcome] Appointment marked RECOVERED — creating Cal.com booking`);
+
       try {
         const winnerUid = await createCalcomBooking({
           customerName: candidate.customerName as string,
           customerPhone: candidate.customerPhone as string,
           startTime: toIso(appt.startTime),
         });
-        console.log(`[processOutcome] Cal.com booking created for winner — uid=${winnerUid}`);
+        console.log(`${ts()} [processOutcome] Cal.com booking created — uid=${winnerUid}`);
         await col.appointments.doc(attempt.appointmentId).update({ calcomBookingUid: winnerUid });
       } catch (err) {
-        console.error(`[processOutcome] Cal.com booking failed for winner (non-fatal):`, err);
+        console.error(`${ts()} [processOutcome] Cal.com booking failed (non-fatal):`, err);
       }
 
       const originalId = candidate.originalAppointmentId as string | undefined;
-      console.log(`[processOutcome] Winner's original appointment — originalId=${originalId ?? 'none'}`);
       if (originalId) {
+        console.log(`${ts()} [processOutcome] "${candidate.customerName}" moved to earlier slot — freeing up originalAppointmentId=${originalId}`);
+
         const originalDoc = await col.appointments.doc(originalId).get();
         const originalCalcomUid = originalDoc.data()?.calcomBookingUid as string | undefined;
 
+        // Mark the winner's old appointment cancelled so the slot is freed in Jericho.
+        // We do NOT trigger a new recovery job here — doing so causes an infinite call chain
+        // (each recovery winner frees a slot that spawns another job calling the same people).
+        // The freed slot will appear as CANCELLED in the appointments table; the clinic can
+        // manually trigger recovery for it if desired.
         await col.appointments.doc(originalId).update({
           status: 'CANCELLED',
           cancelledAt: now(),
           cancelledBy: 'system-slot-upgrade',
           updatedAt: now(),
         });
-        console.log(`[processOutcome] Original appointment ${originalId} cancelled, starting cascade recovery`);
+        console.log(`${ts()} [processOutcome] Original appointment ${originalId} cancelled (cancelledBy=system-slot-upgrade) — no cascade recovery`);
 
-        // Cancel the winner's old Cal.com booking
         if (originalCalcomUid) {
           cancelCalcomBooking(originalCalcomUid, 'Patient upgraded to earlier slot').catch((err) =>
-            console.error(`[processOutcome] Cal.com cancel failed for original booking ${originalCalcomUid}:`, err)
+            console.error(`${ts()} [processOutcome] Cal.com cancel failed for ${originalCalcomUid}:`, err)
           );
         }
-
-        createRecoveryJob(originalId).catch((err) =>
-          console.error(`[processOutcome] Cascade recovery failed for ${originalId}:`, err)
-        );
       }
-      console.log(`[processOutcome] DONE — job ${jobDoc.id} SUCCESS`);
+      console.log(`${ts()} [processOutcome] DONE — job ${jobDoc.id} SUCCESS\n`);
       break;
     }
 
     case 'DECLINED': {
-      console.log(`[processOutcome] DECLINED — reason="${extractionData.declineReason ?? 'none'}", moving to next candidate`);
+      banner('DECLINED — MOVING TO NEXT CANDIDATE');
+      console.log(`${ts()} [processOutcome] "${candidate.customerName}" declined — reason: "${extractionData.declineReason ?? 'none'}"`);
       candidates[idx] = { ...candidate, status: 'DECLINED' };
       await moveToNext(jobDoc.id, idx, candidates, job, appt);
       break;
@@ -213,15 +216,16 @@ export async function processOutcome(webhook: FonioWebhookPayload): Promise<void
     case 'NO_ANSWER':
     case 'VOICEMAIL': {
       const retryCount = ((candidate.retryCount as number) ?? 0) + 1;
-      console.log(`[processOutcome] ${outcome} — retryCount=${retryCount} maxRetries=${maxRetries}`);
       candidates[idx] = { ...candidate, status: outcome, retryCount };
 
       if (retryCount < maxRetries) {
-        console.log(`[processOutcome] Retrying same candidate (attempt ${retryCount + 1})`);
+        banner(`${outcome} — REDIALING (attempt ${retryCount + 1} of ${maxRetries})`);
+        console.log(`${ts()} [processOutcome] "${candidate.customerName}" did not answer — scheduling redial`);
         await jobDoc.ref.update({ candidates, updatedAt: now() });
         await initiateCall(jobDoc.id, idx, appt);
       } else {
-        console.log(`[processOutcome] Candidate ${idx} exhausted after ${retryCount} attempts — moving to next`);
+        banner(`${outcome} — CANDIDATE EXHAUSTED (${retryCount}/${maxRetries} attempts used)`);
+        console.log(`${ts()} [processOutcome] "${candidate.customerName}" unreachable after ${retryCount} attempts — moving to next candidate`);
         candidates[idx] = { ...candidates[idx], status: 'EXHAUSTED' };
         await moveToNext(jobDoc.id, idx, candidates, job, appt);
       }
@@ -229,7 +233,8 @@ export async function processOutcome(webhook: FonioWebhookPayload): Promise<void
     }
 
     case 'CALLBACK_REQUESTED': {
-      console.log(`[processOutcome] CALLBACK_REQUESTED — callbackTime="${extractionData.callbackTime ?? 'unspecified'}", pausing job`);
+      banner('CALLBACK REQUESTED — JOB PAUSED');
+      console.log(`${ts()} [processOutcome] "${candidate.customerName}" asked to be called back — callbackTime="${extractionData.callbackTime ?? 'unspecified'}"`);
       candidates[idx] = {
         ...candidate,
         status: 'CALLBACK_REQUESTED',
@@ -240,16 +245,19 @@ export async function processOutcome(webhook: FonioWebhookPayload): Promise<void
         status: 'CALLBACK_REQUESTED',
         updatedAt: now(),
       });
+      console.log(`${ts()} [processOutcome] Job paused — awaiting manual callback or scheduled retry\n`);
       break;
     }
 
     case 'FAILED': {
-      console.error(`[processOutcome] FAILED — reason="${extractionData.failureReason ?? 'unknown'}", escalating job`);
+      banner('CALL FAILED — ESCALATING JOB');
+      console.error(`${ts()} [processOutcome] Technical failure — reason="${extractionData.failureReason ?? 'unknown'}"`);
       await jobDoc.ref.update({
         status: 'ESCALATED',
         escalationReason: extractionData.failureReason ?? 'Fonio call failure',
         updatedAt: now(),
       });
+      console.log(`${ts()} [processOutcome] Job ${jobDoc.id} escalated for manual review\n`);
       break;
     }
   }
@@ -263,11 +271,11 @@ async function moveToNext(
   appt: Appointment
 ): Promise<void> {
   const nextIdx = currentIdx + 1;
-  console.log(`[moveToNext] jobId=${jobId} currentIdx=${currentIdx} nextIdx=${nextIdx} totalCandidates=${candidates.length}`);
 
   if (nextIdx < candidates.length) {
     const next = candidates[nextIdx] as Record<string, unknown>;
-    console.log(`[moveToNext] Advancing to candidate ${nextIdx} — name=${next.customerName}`);
+    banner(`NEXT CANDIDATE (${nextIdx + 1}/${candidates.length})`);
+    console.log(`${ts()} [moveToNext] job=${jobId} advancing ${currentIdx + 1} -> ${nextIdx + 1} — calling "${next.customerName}"`);
     await col.recoveryJobs.doc(jobId).update({
       candidates,
       currentCandidateIndex: nextIdx,
@@ -275,12 +283,14 @@ async function moveToNext(
     });
     await initiateCall(jobId, nextIdx, appt);
   } else {
-    console.warn(`[moveToNext] No more candidates — marking job ${jobId} FAILED`);
+    banner('JOB FAILED — ALL CANDIDATES EXHAUSTED');
+    console.warn(`${ts()} [moveToNext] job=${jobId} — tried all ${candidates.length} candidate(s), none accepted. Marking FAILED.`);
     await col.recoveryJobs.doc(jobId).update({
       candidates,
       status: 'FAILED',
       completedAt: now(),
       updatedAt: now(),
     });
+    console.log(`${ts()} [moveToNext] Job ${jobId} marked FAILED\n`);
   }
 }

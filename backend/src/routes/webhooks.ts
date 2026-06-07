@@ -8,26 +8,27 @@ import { Appointment } from '../types';
 
 const APT_TS = ['startTime', 'endTime', 'createdAt', 'updatedAt', 'cancelledAt', 'recoveredAt'];
 const router = Router();
+const ts = () => new Date().toISOString().slice(11, 23);
 
 // ── Fonio ─────────────────────────────────────────────────────────────────────
 
 router.post('/fonio', validateBody(FonioWebhookSchema), async (req, res, next) => {
   try {
     const body = req.body;
-    console.log(`[webhook/fonio] Received — id=${body.id} toNumber=${body.toNumber ?? 'null'} fromNumber=${body.fromNumber ?? 'null'} duration=${body.duration ?? '?'}s disconnectReason=${body.disconnectReason ?? 'none'}`);
-    console.log(`[webhook/fonio] extractionData=${JSON.stringify(body.extractionData)}`);
+    console.log(`\n${ts()} [webhook/fonio] >>> INCOMING — id=${body.id} toNumber=${body.toNumber ?? 'null'} duration=${body.duration ?? '?'}s disconnectReason=${body.disconnectReason ?? 'none'}`);
+    console.log(`${ts()} [webhook/fonio] extractionData=${JSON.stringify(body.extractionData)}`);
 
     if (!body.extractionData?.callOutcome) {
-      console.log(`[webhook/fonio] No callOutcome — ignoring (in-progress event)`);
+      console.log(`${ts()} [webhook/fonio] No callOutcome in payload — ignoring (in-progress event)`);
       return res.json({ ok: true });
     }
 
-    console.log(`[webhook/fonio] Processing outcome=${body.extractionData.callOutcome}`);
+    console.log(`${ts()} [webhook/fonio] Dispatching to processOutcome — outcome=${body.extractionData.callOutcome}`);
     await processOutcome(body);
-    console.log(`[webhook/fonio] Done`);
+    console.log(`${ts()} [webhook/fonio] processOutcome complete`);
     res.json({ ok: true });
   } catch (err) {
-    console.error(`[webhook/fonio] Unhandled error:`, err);
+    console.error(`${ts()} [webhook/fonio] Unhandled error:`, err);
     next(err);
   }
 });
@@ -37,7 +38,7 @@ router.post('/fonio', validateBody(FonioWebhookSchema), async (req, res, next) =
 router.post('/calcom', validateBody(CalcomWebhookSchema), async (req, res, next) => {
   try {
     const { triggerEvent, payload } = req.body;
-    console.log(`[webhook/calcom] Received — triggerEvent=${triggerEvent} bookingUid=${payload.uid} startTime=${payload.startTime ?? 'n/a'}`);
+    console.log(`\n${ts()} [webhook/calcom] >>> INCOMING — triggerEvent=${triggerEvent} bookingUid=${payload.uid} startTime=${payload.startTime ?? 'n/a'}`);
 
     if (triggerEvent === 'BOOKING_CREATED' || triggerEvent === 'BOOKING_RESCHEDULED') {
       // Primary duplicate check: exact calcomBookingUid match
@@ -84,11 +85,13 @@ router.post('/calcom', validateBody(CalcomWebhookSchema), async (req, res, next)
         .where('status', 'in', ['BOOKED', 'RECOVERED'])
         .get();
       const payloadStart = payload.startTime as string;
+      // Normalise both to UTC before comparing — Cal.com may return the time in the
+      // attendee's local timezone (e.g. '+02:00') while Firestore stores UTC.
+      const payloadUtcMinute = new Date(payloadStart).toISOString().slice(0, 16);
       const sameSlot = activeSnap.docs.find((d) => {
         const st = d.data().startTime;
         const stIso: string = st?.toDate ? st.toDate().toISOString() : String(st ?? '');
-        // Compare up to the minute to tolerate minor timezone normalisation differences
-        return stIso.slice(0, 16) === payloadStart.slice(0, 16);
+        return new Date(stIso).toISOString().slice(0, 16) === payloadUtcMinute;
       });
       if (sameSlot) {
         console.log(`[webhook/calcom] ${triggerEvent} — appointment ${sameSlot.id} already exists for customer ${customer.name} at this slot, backfilling calcomBookingUid=${payload.uid}`);

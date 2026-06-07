@@ -35,9 +35,23 @@ export const col = {
 export const now = () => Timestamp.now();
 
 export const toIso = (value: unknown): string => {
-  if (!value) return new Date().toISOString();
-  if (value instanceof Timestamp) return value.toDate().toISOString();
-  if (value instanceof Date) return value.toISOString();
+  const getLocalIsoString = (date: Date): string => {
+    const pad = (num: number) => String(num).padStart(2, '0');
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+    const ms = String(date.getMilliseconds()).padStart(3, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${ms}`;
+  };
+
+  if (!value) return getLocalIsoString(new Date());
+  if (value instanceof Timestamp) return getLocalIsoString(value.toDate());
+  if (value instanceof Date) return getLocalIsoString(value);
   return String(value);
 };
 
