@@ -16,17 +16,17 @@ import webhooksRouter from './routes/webhooks';
 export const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: process.env.FRONTEND_URL ?? 'http://localhost:5173' }));
+app.use(cors({ origin: "*" }));
 app.use(morgan('dev'));
 app.use(express.json());
 
-app.use('/api/customers',     customersRouter);
-app.use('/api/appointments',  appointmentsRouter);
-app.use('/api/waitlist',      waitlistRouter);
+app.use('/api/customers', customersRouter);
+app.use('/api/appointments', appointmentsRouter);
+app.use('/api/waitlist', waitlistRouter);
 app.use('/api/recovery-jobs', recoveryJobsRouter);
-app.use('/api/analytics',     analyticsRouter);
-app.use('/api/settings',      settingsRouter);
-app.use('/api/personas',      personasRouter);
-app.use('/api/webhooks',      webhooksRouter);
+app.use('/api/analytics', analyticsRouter);
+app.use('/api/settings', settingsRouter);
+app.use('/api/personas', personasRouter);
+app.use('/api/webhooks', webhooksRouter);
 
 app.use(errorHandler);
