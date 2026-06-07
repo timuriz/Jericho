@@ -9,8 +9,11 @@ dist/
 .env.*
 !.env.example
 !**/.env.example
+backend/.env
+frontend/.env
 backend/service-account.json
 service-account.json
+message.txt
 backend/*.json
 !backend/package.json
 !backend/tsconfig.json
