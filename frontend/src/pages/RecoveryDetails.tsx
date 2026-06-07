@@ -9,15 +9,14 @@ import { RecoveryStatusBadge } from '@/components/recovery/RecoveryStatusBadge';
 import { CandidateList } from '@/components/recovery/CandidateList';
 import { CallAttemptItem } from '@/components/recovery/CallAttemptItem';
 import { RecoveryTimeline } from '@/components/recovery/RecoveryTimeline';
-import { useRecoveryJobRealtime, useEscalateJob } from '@/hooks/useRecoveryJobs';
+import { useRecoveryJobRealtime, useCallAttemptsRealtime, useEscalateJob } from '@/hooks/useRecoveryJobs';
 import { formatDateTime, formatRelative, formatCurrency } from '@/lib/utils';
 
 export default function RecoveryDetails() {
   const { id } = useParams<{ id: string }>();
   const { job, loading } = useRecoveryJobRealtime(id);
+  const { attempts: callAttempts } = useCallAttemptsRealtime(id);
   const escalate = useEscalateJob();
-
-  const callAttempts = job?.callAttempts ?? [];
 
   if (loading) {
     return (

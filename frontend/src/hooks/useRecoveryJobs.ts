@@ -4,7 +4,7 @@ import { collection, onSnapshot, query, where, orderBy, type QuerySnapshot, type
 import { db } from '@/lib/firebase';
 import { recoveryJobsApi } from '@/lib/api';
 import { queryKeys } from '@/lib/queryClient';
-import type { RecoveryJob } from '@/types';
+import type { RecoveryJob, CallAttempt } from '@/types';
 
 // Real-time active jobs via Firestore listener
 export function useActiveRecoveryJobsRealtime() {
@@ -91,6 +91,35 @@ export function useEscalateJob() {
   });
 }
 
+// Real-time call attempts for a single job
+export function useCallAttemptsRealtime(jobId: string | undefined) {
+  const [attempts, setAttempts] = useState<CallAttempt[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!jobId) { setLoading(false); return; }
+    const q = query(
+      collection(db, 'callAttempts'),
+      where('recoveryJobId', '==', jobId),
+      orderBy('initiatedAt', 'asc')
+    );
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        setAttempts(snap.docs.map((d) => convertFirestoreCallAttempt(d.id, d.data())));
+        setLoading(false);
+      },
+      (err) => {
+        console.error('[Firestore] Error watching callAttempts:', err);
+        setLoading(false);
+      }
+    );
+    return () => unsub();
+  }, [jobId]);
+
+  return { attempts, loading };
+}
+
 // Firestore timestamp → ISO string conversion
 function convertTimestamp(value: unknown): string {
   if (!value) return new Date().toISOString();
@@ -100,6 +129,29 @@ function convertTimestamp(value: unknown): string {
     return (value as { toDate: () => Date }).toDate().toISOString();
   }
   return new Date().toISOString();
+}
+
+function convertFirestoreCallAttempt(id: string, raw: Record<string, unknown>): CallAttempt {
+  return {
+    id,
+    recoveryJobId: raw.recoveryJobId as string,
+    customerId: raw.customerId as string,
+    customerName: raw.customerName as string,
+    customerPhone: raw.customerPhone as string,
+    appointmentId: raw.appointmentId as string,
+    fonioCallId: raw.fonioCallId as string | undefined,
+    status: raw.status as CallAttempt['status'],
+    outcome: raw.outcome as CallAttempt['outcome'],
+    attemptNumber: (raw.attemptNumber as number) ?? 1,
+    initiatedAt: convertTimestamp(raw.initiatedAt),
+    completedAt: raw.completedAt ? convertTimestamp(raw.completedAt) : undefined,
+    duration: raw.duration as number | undefined,
+    callbackScheduledAt: raw.callbackScheduledAt ? convertTimestamp(raw.callbackScheduledAt) : undefined,
+    errorMessage: raw.errorMessage as string | undefined,
+    transcript: raw.transcript as string | null | undefined,
+    declineReason: raw.declineReason as string | null | undefined,
+    customerResponse: raw.customerResponse as string | null | undefined,
+  };
 }
 
 function convertFirestoreJob(id: string, raw: Record<string, unknown>): RecoveryJob {
