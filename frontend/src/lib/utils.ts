@@ -1,6 +1,11 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { format, formatDistanceToNow, parseISO, isValid } from 'date-fns';
+import {
+  format,
+  formatDistanceToNow,
+  parseISO,
+  isValid,
+} from 'date-fns';
 import type { RecoveryJobStatus, CandidateStatus, CallOutcome, AppointmentStatus } from '../types';
 
 export function cn(...inputs: ClassValue[]): string {
