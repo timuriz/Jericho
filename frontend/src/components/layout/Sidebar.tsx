@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const navItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard', exact: true },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/recovery-jobs', icon: PhoneCall, label: 'Recovery Jobs' },
   { to: '/appointments', icon: Calendar, label: 'Appointments' },
   { to: '/waitlist', icon: List, label: 'Waitlist' },
